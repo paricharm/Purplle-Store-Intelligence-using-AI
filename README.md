@@ -230,6 +230,11 @@ The older terminal dashboard is still available:
 ```bash
 python dashboard/app.py --api-url http://127.0.0.1:8000 --store-id ST1008
 ```
+## Live Demo
+
+🔗 Demo Link: https://shun-talcum-fedora.ngrok-free.dev
+
+Access the live dashboard and API through the link above.
 
 ## Important Files
 
