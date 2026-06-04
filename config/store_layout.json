@@ -1,0 +1,104 @@
+{
+  "stores": {
+    "ST1008": {
+      "store_name": "Brigade_Bangalore",
+      "city": "Bangalore",
+      "timezone": "Asia/Kolkata",
+      "open_hours": {
+        "open": "10:00",
+        "close": "22:00"
+      },
+      "cameras": {
+        "CAM_1": {
+          "label": "Main floor / display island",
+          "detection_filter": {
+            "min_bottom_y_norm": 0.50,
+            "min_height_norm": 0.16,
+            "max_width_norm": 0.55
+          }
+        },
+        "CAM_2": {
+          "label": "Main floor wall fixtures",
+          "detection_filter": {
+            "min_bottom_y_norm": 0.50,
+            "min_height_norm": 0.16,
+            "max_width_norm": 0.55
+          }
+        },
+        "CAM_3": {
+          "label": "Entry / exit threshold",
+          "detection_filter": {
+            "min_bottom_y_norm": 0.42,
+            "min_height_norm": 0.14,
+            "max_width_norm": 0.70
+          },
+          "entry_line": {
+            "orientation": "vertical",
+            "position": 0.72,
+            "inbound_direction": "left"
+          }
+        },
+        "CAM_4": {
+          "label": "Service / staff support area",
+          "detection_filter": {
+            "min_bottom_y_norm": 0.45,
+            "min_height_norm": 0.14,
+            "max_width_norm": 0.70
+          }
+        },
+        "CAM_5": {
+          "label": "Billing counter",
+          "detection_filter": {
+            "min_bottom_y_norm": 0.45,
+            "min_height_norm": 0.14,
+            "max_width_norm": 0.70
+          }
+        }
+      },
+      "zones": [
+        {
+          "zone_id": "ENTRY",
+          "camera_ids": ["CAM_3"],
+          "polygon": [[0.62, 0.0], [1.0, 0.0], [1.0, 1.0], [0.62, 1.0]],
+          "sku_zone": null
+        },
+        {
+          "zone_id": "SKINCARE",
+          "camera_ids": ["CAM_1", "CAM_2"],
+          "polygon": [[0.0, 0.0], [0.48, 0.0], [0.48, 0.62], [0.0, 0.62]],
+          "sku_zone": "SKINCARE"
+        },
+        {
+          "zone_id": "MAKEUP",
+          "camera_ids": ["CAM_1", "CAM_2"],
+          "polygon": [[0.48, 0.0], [1.0, 0.0], [1.0, 0.64], [0.48, 0.64]],
+          "sku_zone": "MAKEUP"
+        },
+        {
+          "zone_id": "HAIRCARE",
+          "camera_ids": ["CAM_1"],
+          "polygon": [[0.0, 0.62], [0.48, 0.62], [0.48, 1.0], [0.0, 1.0]],
+          "sku_zone": "HAIRCARE"
+        },
+        {
+          "zone_id": "FRAGRANCE",
+          "camera_ids": ["CAM_2"],
+          "polygon": [[0.48, 0.64], [1.0, 0.64], [1.0, 1.0], [0.48, 1.0]],
+          "sku_zone": "FRAGRANCE"
+        },
+        {
+          "zone_id": "SERVICE_AREA",
+          "camera_ids": ["CAM_4"],
+          "polygon": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]],
+          "sku_zone": "SERVICE"
+        },
+        {
+          "zone_id": "BILLING",
+          "camera_ids": ["CAM_5"],
+          "polygon": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]],
+          "sku_zone": "CHECKOUT"
+        }
+      ]
+    }
+  }
+}
