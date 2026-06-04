@@ -1,0 +1,27 @@
+__pycache__/
+.pytest_cache/
+.test_tmp/
+.coverage
+.coverage.*
+htmlcov/
+.tmp/
+pytest-cache-files-*/
+.venv/
+venv/
+data/
+*.db
+*.sqlite
+*.pyc
+runs/
+models/*.pt
+*.pt
+!models/best.pt
+mobileclip*.ts
+events.jsonl
+generated_events.jsonl
+generated_events_stitched.jsonl
+cam3_check.jsonl
+_camera_events/
+debug_frames/
+CCTV Footage/
+sample_data/store-intelligence-videos/*.mp4

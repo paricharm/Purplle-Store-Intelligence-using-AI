@@ -1,0 +1,37 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY requirements.txt /app/requirements.txt
+COPY requirements-pipeline.txt /app/requirements-pipeline.txt
+RUN pip install --no-cache-dir --default-timeout=1000 --retries 10 -r /app/requirements.txt -r /app/requirements-pipeline.txt
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libgl1 \
+        libglib2.0-0 \
+        libsm6 \
+        libx11-6 \
+        libxcb1 \
+        libxext6 \
+        libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY app /app/app
+COPY pipeline /app/pipeline
+COPY dashboard /app/dashboard
+COPY config /app/config
+COPY sample_data /app/sample_data
+COPY models /app/models
+COPY docs /app/docs
+COPY scripts /app/scripts
+COPY README.md /app/README.md
+
+COPY ["Brigade_Bangalore_10_April_26 (1)bc6219c.csv", "/app/Brigade_Bangalore_10_April_26 (1)bc6219c.csv"]
+COPY ["POS - sample transactionsb1e826f.csv", "/app/POS - sample transactionsb1e826f.csv"]
+COPY ["sample_eventsbe42122.jsonl", "/app/sample_eventsbe42122.jsonl"]
+
+CMD ["python", "-m", "pipeline.run_all", "--video-dir", "/app/sample_data/store-intelligence-videos", "--model", "/app/models/best.pt", "--tracker", "bytetrack", "--pos-csv", "/app/POS - sample transactionsb1e826f.csv", "--output", "/data/generated_events_custom_yolov8.jsonl"]

@@ -1,0 +1,177 @@
+services:
+  api:
+    build: .
+    container_name: store-intelligence-api
+    env_file:
+      - .env.example
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+      - ./models:/app/models:ro
+      - ./sample_data:/app/sample_data:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"]
+      interval: 15s
+      timeout: 15s
+      retries: 8
+      start_period: 30s
+
+  event-replay:
+    build: .
+    container_name: store-intelligence-event-replay
+    depends_on:
+      api:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    volumes:
+      - ./data:/data
+      - ./sample_data:/app/sample_data:ro
+    command:
+      - python
+      - -m
+      - pipeline.live_replay
+      - --events
+      - /app/sample_data/sample_events.jsonl
+      - --api-url
+      - http://api:8000
+      - --speed
+      - "60"
+      - --batch-size
+      - "1"
+      - --max-sleep
+      - "0.2"
+      - --fresh-run
+
+  custom-yolo-generate:
+    build:
+      context: .
+      dockerfile: Dockerfile.pipeline
+    container_name: store-intelligence-custom-yolo-generate
+    profiles:
+      - generate
+    env_file:
+      - .env.example
+    environment:
+      YOLO_CONFIG_DIR: /data/ultralytics
+    volumes:
+      - ./data:/data
+      - ./models:/app/models:ro
+      - ./sample_data:/app/sample_data:ro
+    command:
+      - python
+      - -m
+      - pipeline.run_all
+      - --video-dir
+      - /data/clips/store1
+      - --model
+      - /app/models/best.pt
+      - --clip-start
+      - "2026-04-10T11:20:00Z"
+      - --frame-stride
+      - "5"
+      - --imgsz
+      - "960"
+      - --conf
+      - "0.05"
+      - --tracker
+      - bytetrack
+      - --pos-csv
+      - /app/POS - sample transactionsb1e826f.csv
+      - --output
+      - /data/generated_events_store1.jsonl
+
+  custom-yolo-live:
+    build:
+      context: .
+      dockerfile: Dockerfile.pipeline
+    container_name: store-intelligence-custom-yolo-live
+    profiles:
+      - live
+    depends_on:
+      api:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    environment:
+      YOLO_CONFIG_DIR: /data/ultralytics
+    volumes:
+      - ./data:/data
+      - ./models:/app/models:ro
+      - ./sample_data:/app/sample_data:ro
+    command:
+      - python
+      - -m
+      - pipeline.docker_live
+      - --video-dir
+      - /data/clips/store1
+      - --model
+      - /app/models/best.pt
+      - --events
+      - /data/generated_events_store1.jsonl
+      - --api-url
+      - http://api:8000
+      - --clip-start
+      - "2026-04-10T11:20:00Z"
+      - --clip-set
+      - store1
+      - --frame-stride
+      - "5"
+      - --imgsz
+      - "960"
+      - --conf
+      - "0.05"
+      - --tracker
+      - bytetrack
+      - --pos-csv
+      - /app/POS - sample transactionsb1e826f.csv
+      - --speed
+      - "12"
+      - --batch-size
+      - "1"
+
+  custom-yolo-all-clips:
+    build:
+      context: .
+      dockerfile: Dockerfile.pipeline
+    container_name: store-intelligence-custom-yolo-all-clips
+    profiles:
+      - all-clips
+    depends_on:
+      api:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    environment:
+      YOLO_CONFIG_DIR: /data/ultralytics
+    volumes:
+      - ./data:/data
+      - ./models:/app/models:ro
+      - ./sample_data:/app/sample_data:ro
+    command:
+      - python
+      - -m
+      - pipeline.docker_live_all_clips
+      - --clips-root
+      - /data/clips
+      - --model
+      - /app/models/best.pt
+      - --api-url
+      - http://api:8000
+      - --clip-start
+      - "2026-04-10T11:20:00Z"
+      - --frame-stride
+      - "5"
+      - --imgsz
+      - "960"
+      - --conf
+      - "0.05"
+      - --tracker
+      - bytetrack
+      - --pos-csv
+      - /app/POS - sample transactionsb1e826f.csv
+      - --speed
+      - "12"
+      - --batch-size
+      - "1"

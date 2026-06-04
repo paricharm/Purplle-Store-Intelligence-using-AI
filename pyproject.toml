@@ -1,0 +1,11 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
+
+[tool.coverage.run]
+branch = true
+source = ["app", "pipeline"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
